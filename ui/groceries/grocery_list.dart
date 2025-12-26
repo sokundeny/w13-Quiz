@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/mock_grocery_repository.dart';
 import '../../models/grocery.dart';
 import 'grocery_form.dart';
+import './grocery_search.dart';
 
 class GroceryList extends StatefulWidget {
   const GroceryList({super.key});
@@ -10,7 +11,11 @@ class GroceryList extends StatefulWidget {
   State<GroceryList> createState() => _GroceryListState();
 }
 
+enum GrocceryListTab { groccery, search }
+
 class _GroceryListState extends State<GroceryList> {
+
+  GrocceryListTab _currentTab=GrocceryListTab.groccery;
 
   void onCreate() async {
     // Navigate to the form screen using the Navigator push
@@ -43,7 +48,32 @@ class _GroceryListState extends State<GroceryList> {
         title: const Text('Your Groceries'),
         actions: [IconButton(onPressed: onCreate, icon: const Icon(Icons.add))],
       ),
-      body: content,
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor:Colors.blue,
+        currentIndex: _currentTab.index,
+        onTap: (index){
+          setState(() {
+            _currentTab=GrocceryListTab.values[index];
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_grocery_store),
+            label: 'Grocceries',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search), 
+            label: 'Search'
+          ),
+        ],
+      ),
+      body: IndexedStack(
+        index:_currentTab.index,
+        children: [
+          content,
+          GrocerySearch(),
+        ],
+      ),
     );
   }
 }
